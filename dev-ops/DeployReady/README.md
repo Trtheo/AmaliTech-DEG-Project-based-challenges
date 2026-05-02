@@ -25,6 +25,8 @@ This project demonstrates core DevOps practices:
 
 ### Architecture
 
+**[View Architecture Diagram](https://drive.google.com/drive/folders/13EHXQcN0PcE3zAsmF7gQcKBHsYUc-9vE)**
+
 ```
 Developer Push → GitHub Actions → Build & Test → Push to GHCR → Deploy to EC2 → Live Application
 ```
