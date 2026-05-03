@@ -263,9 +263,9 @@ chmod 600 newkeypair.pem
 **URL:** http://54.89.125.94
 
 **Available Routes:**
-- `GET /health` — Returns service health status
-- `GET /metrics` — Returns uptime and memory usage
-- `POST /data` — Echoes back JSON payload
+- `GET /health` : Returns service health status
+- `GET /metrics` : Returns uptime and memory usage
+- `POST /data` : Echoes back JSON payload
 
 ---
 
@@ -303,7 +303,7 @@ chmod 600 newkeypair.pem
 
 ### Updating the application
 
-Simply push changes to the `main` branch — the CI/CD pipeline handles everything automatically.
+Simply push changes to the `main` branch , the CI/CD pipeline handles everything automatically.
 
 ### Updating Docker
 

@@ -9,9 +9,11 @@ A containerized Node.js API with full CI/CD automation, deployed to AWS EC2.
 **Public Endpoint:** http://54.89.125.94
 
 **Available Routes:**
-- `GET /health` : Health check endpoint
-- `GET /metrics` : System metrics (uptime, memory usage)
-- `POST /data` : Echo JSON payload
+- `GET /health` : Health check endpoint                    http://54.89.125.94/health
+
+- `GET /metrics` : System metrics (uptime, memory usage)   http://54.89.125.94/metrics
+
+- `POST /data` : Echo JSON payload                         http://54.89.125.94/data
 
 ---
 
@@ -25,15 +27,15 @@ This project demonstrates core DevOps practices:
 
 ### Architecture Overview
 
-**[ View Full Architecture Diagram](https://drive.google.com/drive/folders/13EHXQcN0PcE3zAsmF7gQcKBHsYUc-9vE)** 
+**[ View Full Architecture Diagram](https://acesse.one/jexqj0x)** 
 
-or Click here   https://drive.google.com/drive/folders/13EHXQcN0PcE3zAsmF7gQcKBHsYUc-9vE
+or Click here   https://acesse.one/jexqj0x
 
 The system follows a modern CI/CD architecture:
 
 ```
 ┌──────────────┐      ┌──────────────────┐      ┌─────────────────┐
-│  Developer   │─────▶│  GitHub Actions  │─────▶│      GHCR       │
+│  Developer   │─────▶  GitHub Actions  │─────▶      GHCR        │
 │  (git push)  │      │  (CI/CD Pipeline)│      │ (Container Reg) │
 └──────────────┘      └──────────────────┘      └─────────────────┘
                               │                          │
@@ -90,7 +92,11 @@ The system follows a modern CI/CD architecture:
 1. **Clone the repository:**
    ```bash
    git clone https://github.com/Trtheo/AmaliTech-DEG-Project-based-challenges.git
-   cd AmaliTech-DEG-Project-based-challenges/dev-ops/DeployReady
+   
+   ```
+    **Enter in directory**
+    ```bash
+   cd AmaliTech-DEG-Project-based-challenges/DeployReady
    ```
 
 2. **Create environment file:**
@@ -124,7 +130,7 @@ The system follows a modern CI/CD architecture:
    - `EC2_SSH_KEY`: Your .pem private key content
    - `EC2_SERVER_IP`: Your EC2 public IP address
 
-5. **Push to main branch** — deployment happens automatically!
+5. **Push to main branch** : deployment happens automatically!
 
 For detailed deployment steps, see [DEPLOYMENT.md](./DEPLOYMENT.md).
 
@@ -169,10 +175,10 @@ The deployment pipeline is fully automated via GitHub Actions (`.github/workflow
 
 ### Pipeline Stages
 
-1. **Test** — Runs `npm test`. If tests fail, deployment stops.
-2. **Build** — Builds Docker image tagged with commit SHA and `latest`
-3. **Push** — Pushes image to GitHub Container Registry
-4. **Deploy** — SSHs into EC2, pulls new image, restarts container
+1. **Test** : Runs `npm test`. If tests fail, deployment stops.
+2. **Build** : Builds Docker image tagged with commit SHA and `latest`
+3. **Push** : Pushes image to GitHub Container Registry
+4. **Deploy** : SSHs into EC2, pulls new image, restarts container
 
 ### Trigger
 
