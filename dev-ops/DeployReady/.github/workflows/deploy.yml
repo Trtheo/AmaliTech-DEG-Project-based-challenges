@@ -49,6 +49,7 @@ jobs:
           docker push ghcr.io/trtheo/deployready:latest
 
       # SSH into EC2 server, pull the new image, and restart the container
+      # If health check fails after deploy, automatically rollback to previous image
       - name: Deploy to EC2
         env:
           SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
@@ -58,9 +59,45 @@ jobs:
           chmod 600 private_key.pem
           ssh -o StrictHostKeyChecking=no -i private_key.pem ubuntu@$SERVER_IP << 'EOF'
             docker login ghcr.io -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }}
-            docker pull ghcr.io/trtheo/deployready:latest
+
+            # Save previous image tag for rollback
+            PREVIOUS_IMAGE=$(docker inspect --format='{{.Config.Image}}' deployready 2>/dev/null || echo "")
+            echo "Previous image: $PREVIOUS_IMAGE"
+
+            # Deploy new image
+            docker pull ghcr.io/trtheo/deployready:${{ github.sha }}
             docker stop deployready || true
             docker rm deployready || true
-            docker run -d --name deployready -p 80:3000 -e PORT=3000 --restart unless-stopped ghcr.io/trtheo/deployready:latest
+            docker run -d --name deployready -p 80:3000 -e PORT=3000 --restart unless-stopped ghcr.io/trtheo/deployready:${{ github.sha }}
+
+            # Health check with retries
+            echo "Running health check..."
+            RETRIES=5
+            HEALTHY=false
+            for i in $(seq 1 $RETRIES); do
+              sleep 5
+              STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost/health)
+              echo "Attempt $i: HTTP $STATUS"
+              if [ "$STATUS" = "200" ]; then
+                HEALTHY=true
+                break
+              fi
+            done
+
+            # Rollback if health check failed
+            if [ "$HEALTHY" = "false" ]; then
+              echo "Health check failed! Rolling back to $PREVIOUS_IMAGE"
+              docker stop deployready || true
+              docker rm deployready || true
+              if [ -n "$PREVIOUS_IMAGE" ]; then
+                docker run -d --name deployready -p 80:3000 -e PORT=3000 --restart unless-stopped $PREVIOUS_IMAGE
+                echo "Rollback complete"
+              else
+                echo "No previous image found, rollback skipped"
+              fi
+              exit 1
+            fi
+
+            echo "Deployment successful!"
           EOF
           rm -f private_key.pem

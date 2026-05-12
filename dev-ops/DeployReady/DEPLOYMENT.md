@@ -299,6 +299,25 @@ chmod 600 newkeypair.pem
 
 ---
 
+## Bonus: Rollback on Failed Health Check
+
+### What was added
+
+The deploy step in `.github/workflows/deploy.yml` now includes an automatic rollback mechanism:
+
+1. **Saves the previous image** tag before deploying the new one
+2. **Deploys the new image** tagged with the commit SHA
+3. **Runs a health check** against `/health` — retries up to 5 times (5s apart)
+4. **Rolls back** to the previous image if all health checks fail, then exits with error to mark the pipeline as failed
+
+### Why
+
+- Prevents a broken deployment from taking down the live application
+- Ensures users always have a working version running
+- Uses commit SHA tags (not just `latest`) so the previous image is always retrievable
+
+---
+
 ## Maintenance
 
 ### Updating the application
