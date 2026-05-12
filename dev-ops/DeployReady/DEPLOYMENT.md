@@ -299,6 +299,38 @@ chmod 600 newkeypair.pem
 
 ---
 
+## Bonus: Terraform Infrastructure as Code
+
+### What was added
+
+A `terraform/` directory with 3 files to provision the EC2 instance and security group:
+
+- `main.tf` — defines the EC2 instance and security group (SSH port 22, HTTP port 80)
+- `variables.tf` — configurable inputs (region, AMI, instance type, key pair)
+- `outputs.tf` — prints the public IP, instance ID, and SSH command after provisioning
+
+### Why
+
+- **Reproducible:** Infrastructure can be recreated with a single command instead of clicking through the AWS console
+- **Version controlled:** Infrastructure changes are tracked in Git alongside application code
+- **Consistent:** Eliminates manual configuration errors
+
+### How to use
+
+```bash
+cd terraform
+terraform init
+terraform plan
+terraform apply
+```
+
+To destroy the infrastructure:
+```bash
+terraform destroy
+```
+
+---
+
 ## Bonus: Rollback on Failed Health Check
 
 ### What was added
